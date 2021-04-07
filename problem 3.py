@@ -25,7 +25,8 @@ def find_closest(numbers: list, closest_to: int):
 
 
 class particle:
-    INERTIA = 0.0
+    # TODO: set these parameters correctly
+    INERTIA = 0.5
     CONST1 = 0.2
     CONST2 = 0.5
 
@@ -112,6 +113,24 @@ class particle_swarm_optimization:
 
         print(self.global_best_centroids)
         print(self.global_best_cost)
+
+        self.make_groups()
+
+    def make_groups(self):
+        groups_dict = dict()  # map centroids to marks (centroid : [marks])
+        for mark in self.marks:
+            closest = find_closest(self.global_best_centroids, mark)
+
+            if closest in groups_dict:
+                groups_dict[closest].append(mark)
+            else:
+                groups_dict[closest] = [mark]
+
+        result = []
+        for group in groups_dict.values():
+            result.append(group)
+
+        print(result)
 
 
 if __name__ == "__main__":
