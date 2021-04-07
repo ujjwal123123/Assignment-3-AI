@@ -13,7 +13,7 @@ import random
 from numpy import array
 
 
-def closest(numbers: list, closest_to: int):
+def find_closest(numbers: list, closest_to: int):
     closest = None  # int, position for which squared distance is least
 
     # find nearest centroid to mark. We need to minimize the cost.
@@ -21,13 +21,13 @@ def closest(numbers: list, closest_to: int):
         if closest is None or abs(closest_to - num) < abs(num - closest):
             closest = num
 
-    return num
+    return closest
 
 
 class particle:
     INERTIA = 0.0
     CONST1 = 0.2
-    CONST2 = 0.4
+    CONST2 = 0.5
 
     def __init__(self, cluster_count: int, min_marks: int, max_marks):
         self.velocity = array([0] * cluster_count)  # array of numbers
@@ -46,16 +46,9 @@ class particle:
         particle_cost_value = 0
 
         for mark in marks:
-            closet_centroid = closest(
-                marks, mark
+            closet_centroid = find_closest(
+                self.centroids, mark
             )  # int, centroid for which squared distance is least
-
-            # find nearest centroid to mark. We need to minimize the cost.
-            for centroid in self.centroids:
-                if closet_centroid is None or abs(mark - centroid) < abs(
-                    mark - closet_centroid
-                ):
-                    closet_centroid = centroid
 
             particle_cost_value += (closet_centroid - mark) ** 2
 
