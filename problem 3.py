@@ -18,7 +18,7 @@ def find_closest(numbers: list, closest_to: int):
 
     # find nearest centroid to mark. We need to minimize the cost.
     for num in numbers:
-        if closest is None or abs(closest_to - num) < abs(num - closest):
+        if closest is None or abs(closest_to - num) < abs(closest_to - closest):
             closest = num
 
     return closest
@@ -27,8 +27,8 @@ def find_closest(numbers: list, closest_to: int):
 class particle:
     # TODO: set these parameters correctly
     INERTIA = 0.5
-    CONST1 = 0.2
-    CONST2 = 0.5
+    CONST1 = 0.01
+    CONST2 = 0.01
 
     def __init__(self, cluster_count: int, min_marks: int, max_marks):
         self.velocity = array([0] * cluster_count)  # array of numbers
@@ -39,7 +39,7 @@ class particle:
         self.local_best_centroids = None  # list, Analogous to position in usual PSO
         self.local_best_cost = None  # int
 
-    def cost(self, marks: list):
+    def calculate_cost(self, marks: list):
         """Update particle_best and global_best"""
         # find squared distance of each particle to the nearest representative
         # in `particle_positions`
@@ -71,24 +71,26 @@ class particle:
 
 
 class particle_swarm_optimization:
-    ITERATION_COUNT = 1000
     """To divide `N` students in `cluster_count` groups using marks they
     obtained. Marks are represented using `marks` list."""
 
+    ITERATION_COUNT = 5
+    PARTICLE_COUNT = 5  # no of particles
+
     def __init__(self, cluster_count: int, marks: list):
-        self.particle_nos = 5
         self.cluster_count = cluster_count
         self.marks = sorted(marks)
         self.global_best_centroids = None
         self.global_best_cost = None
         self.particles = [
             particle(cluster_count, min(marks), max(marks))
-            for _ in range(self.particle_nos)
+            for _ in range(self.PARTICLE_COUNT)
         ]
+        self.cost()
 
     def cost(self):
         for particle in self.particles:
-            particle.cost(self.marks)
+            particle.calculate_cost(self.marks)
 
             if (
                 self.global_best_cost is None
@@ -108,8 +110,8 @@ class particle_swarm_optimization:
 
     def solve(self):
         for _ in range(self.ITERATION_COUNT):
-            self.cost()
             self.move()
+            self.cost()
 
         print(self.global_best_centroids)
         print(self.global_best_cost)
@@ -134,5 +136,5 @@ class particle_swarm_optimization:
 
 
 if __name__ == "__main__":
-    problem = particle_swarm_optimization(5, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    problem = particle_swarm_optimization(2, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
     problem.solve()
