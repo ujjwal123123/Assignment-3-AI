@@ -6,15 +6,13 @@ Algorithm. You should report the following for the search strategy:
 Problem: Maximize f(x) =2x^2 + 1, where 0<x<=6
 """
 
-"""
-1) Which encoding should I use? Real valued or binary/integer?
-2) How can I be sure that successors generated are not worse than parent?
-"""
 
 import random
 
 
 def fitness_function(solution):
+    if solution > 6 or solution < 0:
+        return 0
     return 2 * (solution ** 2) + 1
 
 
@@ -27,52 +25,48 @@ def get_fitness(states: list):
     return fitness_dict
 
 
-def selection_operator(fitness_dict: dict) -> list:
-    # return pairs of integers sorted as per their fitness value
-    print(fitness_dict.items())
+def selection_operator(states: list) -> list:
+    fitness_dict = get_fitness(states)
+
     sorted_by_fitness = [
         state
         for state, fitness in sorted(fitness_dict.items(), key=lambda item: -item[1])
     ]
-    # assert sorted_by_fitness is not None
+    assert sorted_by_fitness is not None
 
     return list(zip(sorted_by_fitness[1::2], sorted_by_fitness[::2]))
 
 
 def crossover_operator(pairs):
-    """
-    (5, 4) (3,2)
-    (4.8, 4.2) (3.8, 3.2)
-    """
     new_states = []
-    a = 0.2
-    b = 0.8  # 0.8
+    weight1 = 0.2
+    weight2 = 0.8
     for pair in pairs:
-        new_states.append(pair[0] * a + pair[1] * b)
-        new_states.append(pair[1] * a + pair[0] * b)
+        new_states.append(pair[0] * weight1 + pair[1] * weight2)
+        new_states.append(pair[1] * weight1 + pair[0] * weight2)
 
     return new_states
 
 
 def mutation_operator(states):
     for i in range(len(states)):
-        if random.randint(1, 2) == 1 and states[i] < 5.9:
-            states[i] += 0.1
+        if random.randint(1, 2) == 1:
+            states[i] += 0.6
         elif states[i] > 0.1:
-            states[i] -= 0.1
+            states[i] -= 0.6
 
 
 def genetic_algorithm():
-    states = [0, 1, 2, 6]
+    states = [0, 1, 2, 8]
 
     itr_no = 0
-    while itr_no < 15:
-        itr_no += 1
-        pairs = selection_operator(get_fitness(states))
-        states = crossover_operator(pairs)
-        mutation_operator(states)
-
+    while itr_no < 20:
         print("Initial states", states)
+
+        itr_no += 1
+        mutation_operator(states)
+        pairs = selection_operator(states)
+        states = crossover_operator(pairs)
 
         max_fitness = 0
         max_fitness_state = None

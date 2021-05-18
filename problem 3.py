@@ -74,8 +74,8 @@ class particle_swarm_optimization:
     """To divide `N` students in `cluster_count` groups using marks they
     obtained. Marks are represented using `marks` list."""
 
-    ITERATION_COUNT = 5
-    PARTICLE_COUNT = 5  # no of particles
+    ITERATION_COUNT = 10
+    PARTICLE_COUNT = 10  # no of particles
 
     def __init__(self, cluster_count: int, marks: list):
         self.cluster_count = cluster_count
@@ -136,5 +136,5 @@ class particle_swarm_optimization:
 
 
 if __name__ == "__main__":
-    problem = particle_swarm_optimization(2, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    problem = particle_swarm_optimization(5, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
     problem.solve()
